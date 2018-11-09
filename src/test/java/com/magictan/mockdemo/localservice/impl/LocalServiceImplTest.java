@@ -32,7 +32,7 @@ public class LocalServiceImplTest {
      */
     @Test
     public void test() {
-        //test commit2
+        //test commit3
         Node target = new Node(1, "target");
         Mockito.when(remoteService.getRemoteNode(1)).thenReturn(target);
         Node result = localService.getRemoteNode(1);
