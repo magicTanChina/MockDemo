@@ -1,6 +1,7 @@
 package com.magictan.mockdemo.localservice.impl;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.eq;
 
@@ -23,6 +24,9 @@ public class LocalServiceImplPowerMockTest {
     @Mock
     private RemoteServiceImpl remoteService;
 
+    /**
+     * mock new关键字
+     */
     @Test
     @PrepareForTest(LocalServiceImpl.class) //PrepareForTest修改local类的字节码以覆盖new的功能
     public void testNew() throws Exception {
@@ -31,9 +35,14 @@ public class LocalServiceImplPowerMockTest {
         //当参数条件使用了any系列方法时，剩余的参数都得使用相应的模糊匹配规则，如eq("name")代表参数等于"name"
         //剩余还有isNull(), isNotNull(), isA()等方法
         PowerMockito.whenNew(Node.class).withArguments(anyInt(), eq("name")).thenReturn(target);
-        Node result = localService.getLocalNode(1, "name");
+        Node result = localService.getLocalNode(2, "name");
+        assertEquals(target, result); //返回值为target
         assertEquals(1, result.getNum());
         assertEquals("target", result.getName());
+
+        //未指定name为"test"的返回值，默认返回null
+        Node result2 = localService.getLocalNode(1, "test");
+        assertNull(result2);
     }
 
 }
