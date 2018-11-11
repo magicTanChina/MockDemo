@@ -9,4 +9,10 @@ public interface IRemoteService {
     public Node getRemoteNode(String name) throws MockException;
 
     public void doSometing();
+
+    public Node getFinalNode();
+
+    public Node getPrivateNode();
+
+    public Node getSystemPropertyNode();
 }

@@ -45,4 +45,66 @@ public class LocalServiceImplPowerMockTest {
         assertNull(result2);
     }
 
+    /**
+     * mock final方法
+     */
+    @Test
+    @PrepareForTest(RemoteServiceImpl.class) //final方法在RemoteServiceImpl类中
+    public void testFinal() {
+        Node target = new Node(2, "mock");
+        PowerMockito.when(remoteService.getFinalNode()).thenReturn(target); //指定返回值
+
+        Node result = remoteService.getFinalNode(); //直接调用final方法，返回mock后的值
+        assertEquals(target, result); //验证返回值
+        assertEquals(2, result.getNum());
+        assertEquals("mock", result.getName());
+    }
+
+    /**
+     * mock static方法
+     */
+    @Test
+    @PrepareForTest(Node.class) //static方法定义在Node类中
+    public void testStatic() {
+        Node target = new Node(2, "mock");
+        PowerMockito.mockStatic(Node.class); //mock static方法前需要加这一句
+        PowerMockito.when(Node.getStaticNode()).thenReturn(target); //指定返回值
+
+        Node result = Node.getStaticNode(); //直接调用static方法，返回mock后的值
+        assertEquals(target, result); //验证返回值
+        assertEquals(2, result.getNum());
+        assertEquals("mock", result.getName());
+    }
+
+    /**
+     * mock 私有方法
+     */
+    @Test
+    @PrepareForTest(RemoteServiceImpl.class) //private方法定义在RemoteServiceImpl类中
+    public void testPrivate() throws Exception {
+        Node target = new Node(2, "mock");
+        PowerMockito.when(remoteService.getPrivateNode()).thenCallRealMethod(); //按照真实代码调用privateMethod方法
+        PowerMockito.when(remoteService, "privateMethod").thenReturn(target); //私有方法无法访问，类似反射传递方法名和参数，此处无参数故未传
+
+        Node result = remoteService.getPrivateNode();
+        assertEquals(target, result); //验证返回值
+        assertEquals(2, result.getNum());
+        assertEquals("mock", result.getName());
+    }
+
+    /**
+     * mock 系统类方法
+     */
+    @Test
+    @PrepareForTest(RemoteServiceImpl.class) //类似new关键字，系统类方法的调用在类RemoteServiceImpl中，所以这里填的是RemoteServiceImpl
+    public void testSystem() {
+        PowerMockito.mockStatic(System.class); //调用的是系统类的静态方法，所以要加这一句
+        PowerMockito.when(System.getProperty("abc")).thenReturn("mock"); //设置System.getProperty("abc")返回"mock"
+        PowerMockito.when(remoteService.getSystemPropertyNode()).thenCallRealMethod(); //设置mock对象调用实际方法
+
+        Node result = remoteService.getSystemPropertyNode(); //按代码会返回一个name属性为"mock"的对象
+        assertEquals(0, result.getNum()); //int默认值为0
+        assertEquals("mock", result.getName()); //remoteService对象中调用System.getProperty("abc")返回的是上面设置的"mock"
+    }
+
 }

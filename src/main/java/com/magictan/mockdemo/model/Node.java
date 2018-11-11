@@ -4,6 +4,10 @@ public class Node {
     private int num;
     private String name;
 
+    public static Node getStaticNode() {
+        return new Node(1, "static node");
+    }
+
     public Node() {
     }
 
